@@ -5,12 +5,14 @@ import * as tempDir from 'temp-dir'
 import * as puppeteer from 'puppeteer'
 
 const readFile = util.promisify(fs.readFile)
+const unlink = util.promisify(fs.unlink)
 
-interface CaptureTarget {
+export interface CaptureTarget {
   url: string
+  target?: string
 }
 
-interface CaptureResult {
+export interface CaptureResult {
   image: Buffer
 }
 
@@ -21,16 +23,24 @@ export async function captureAll(
   const page = await browser.newPage()
 
   return seqAsync(targets, async target => {
-    const tempPath = path.join(
-      tempDir,
-      `block-capture-image-${Date.now().toString(16)}.png`
-    )
     await page.goto(target.url)
-    await page.screenshot({ path: tempPath })
-    return {
-      image: await readFile(tempPath)
-    }
+    const els = await getCaptureElement(page, target.target)
+
+    return Promise.all(els.map(async el => {
+      const tempPath = path.join(
+        tempDir,
+        `block-capture-image-${Date.now().toString(16)}.png`
+      )
+      await el.screenshot({ path: tempPath })
+      const image = await readFile(tempPath)
+      await unlink(tempPath)
+
+      return {
+        image
+      }
+    }))
   })
+    .then(flatten)
     .then(res => {
       browser.close()
       return res
@@ -39,6 +49,16 @@ export async function captureAll(
       browser.close()
       throw err
     })
+}
+
+function getCaptureElement(page: puppeteer.Page, selector: string | undefined): Promise<puppeteer.ElementHandle[]> {
+  return page.$$(selector || 'html')
+}
+
+function flatten<T>(list: T[][]): T[] {
+  return list.reduce<T[]>((acc, child) => {
+    return acc.concat(child)
+  }, [])
 }
 
 function seqAsync<T, R>(list: T[], fn: (item: T) => Promise<R>): Promise<R[]> {
