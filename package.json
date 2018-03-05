@@ -1,20 +1,27 @@
 {
-  "name": "capture-block",
+  "name": "capture-all",
   "version": "0.0.0",
   "author": "katashin",
-  "description": "",
-  "keywords": [],
+  "description": "Flexible utility to get screenshots from Web pages",
+  "keywords": [
+    "screenshot",
+    "snapshot",
+    "capture",
+    "utility",
+    "puppeteer",
+    "chrome"
+  ],
   "license": "MIT",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
     "lib"
   ],
-  "homepage": "https://github.com/ktsn/capture-block",
-  "bugs": "https://github.com/ktsn/capture-block/issues",
+  "homepage": "https://github.com/ktsn/capture-all",
+  "bugs": "https://github.com/ktsn/capture-all/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ktsn/capture-block.git"
+    "url": "https://github.com/ktsn/capture-all.git"
   },
   "scripts": {
     "prepublishOnly": "npm run clean && npm run test && npm run build",
