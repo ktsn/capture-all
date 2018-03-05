@@ -14,6 +14,8 @@ export interface CaptureTarget {
 
 export interface CaptureResult {
   image: Buffer
+  url: string
+  target: string
 }
 
 export async function captureAll(
@@ -36,7 +38,9 @@ export async function captureAll(
       await unlink(tempPath)
 
       return {
-        image
+        image,
+        url: target.url,
+        target: target.target || 'html'
       }
     }))
   })

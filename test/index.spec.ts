@@ -6,6 +6,8 @@ describe('Snapshot test', async () => {
 
   it('should capture web page', async () => {
     const res = await captureAll([{ url: fixtureUrl }])
+    expect(res[0].url).toBe(fixtureUrl)
+    expect(res[0].target).toBe('html')
     expect(res[0].image).toMatchImageSnapshot()
   })
 
@@ -15,7 +17,9 @@ describe('Snapshot test', async () => {
       target: '.paragraph'
     }])
     expect(res.length).toBe(2)
+    expect(res[0].target).toBe('.paragraph')
     expect(res[0].image).toMatchImageSnapshot()
+    expect(res[1].target).toBe('.paragraph')
     expect(res[1].image).toMatchImageSnapshot()
   })
 })
