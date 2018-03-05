@@ -7,10 +7,16 @@ import * as puppeteer from 'puppeteer'
 const readFile = util.promisify(fs.readFile)
 const unlink = util.promisify(fs.unlink)
 
+export interface Viewport {
+  width: number
+  height: number
+}
+
 export interface CaptureTarget {
   url: string
   target?: string
   hidden?: string[]
+  viewport?: Viewport
 }
 
 export interface CaptureResult {
@@ -18,6 +24,7 @@ export interface CaptureResult {
   url: string
   target: string
   hidden: string[]
+  viewport: Viewport
 }
 
 export async function captureAll(
@@ -28,6 +35,9 @@ export async function captureAll(
 
   return seqAsync(targets, async target => {
     await page.goto(target.url)
+    if (target.viewport) {
+      page.setViewport(target.viewport)
+    }
     if (target.hidden) {
       await page.addStyleTag({
         content: generateStyleToHide(target.hidden)
@@ -49,7 +59,8 @@ export async function captureAll(
           image,
           url: target.url,
           target: target.target || 'html',
-          hidden: target.hidden || []
+          hidden: target.hidden || [],
+          viewport: page.viewport()
         }
       })
     )
