@@ -27,7 +27,7 @@ export interface CaptureResult {
   viewport: Viewport
 }
 
-export async function captureAll(
+export default async function captureAll(
   targets: CaptureTarget[]
 ): Promise<CaptureResult[]> {
   const browser = await puppeteer.launch()
