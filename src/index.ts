@@ -1,11 +1,4 @@
-import * as path from 'path'
-import * as fs from 'fs'
-import * as util from 'util'
-import * as tempDir from 'temp-dir'
 import * as puppeteer from 'puppeteer'
-
-const readFile = util.promisify(fs.readFile)
-const unlink = util.promisify(fs.unlink)
 
 export interface Viewport {
   width: number
@@ -47,13 +40,7 @@ export default async function captureAll(
 
     return Promise.all(
       els.map(async el => {
-        const tempPath = path.join(
-          tempDir,
-          `block-capture-image-${Date.now().toString(16)}.png`
-        )
-        await el.screenshot({ path: tempPath })
-        const image = await readFile(tempPath)
-        await unlink(tempPath)
+        const image = await el.screenshot()
 
         return {
           image,
