@@ -7,24 +7,50 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Fixture Document</title>
   <style>
+    h1 {
+      height: 30px;
+      width: 100px;
+      background-color: #4766ff;
+    }
+
+    h2 {
+      height: 20px;
+      width: 50px;
+      background-color: #58ff55;
+    }
+
+    p {
+      height: 16px;
+      width: 100%;
+      background-color: #888;
+    }
+
+    .sub {
+      background-color: #ccc;
+    }
+
     @media screen and (max-width: 797px) {
-      body {
-        font-size: 12px;
+      h1 {
+        height: 24px;
       }
-      h1,
+
       h2 {
-        font-weight: normal;
+        height: 18px;
+      }
+
+      p {
+        height: 12px;
       }
     }
   </style>
 </head>
 
 <body>
-  <h1 id="title">Title</h1>
-  <p class="paragraph">Paragraph</p>
+  <h1 id="title"></h1>
+  <p class="paragraph"></p>
 
-  <h2 id="sub-title">Sub Title</h2>
-  <p class="paragraph">Sub Paragraph</p>
+  <h2 id="sub-title"></h2>
+  <p class="paragraph sub"></p>
 </body>
 
 </html>
