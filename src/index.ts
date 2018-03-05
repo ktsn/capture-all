@@ -10,12 +10,14 @@ const unlink = util.promisify(fs.unlink)
 export interface CaptureTarget {
   url: string
   target?: string
+  hidden?: string[]
 }
 
 export interface CaptureResult {
   image: Buffer
   url: string
   target: string
+  hidden: string[]
 }
 
 export async function captureAll(
@@ -26,37 +28,54 @@ export async function captureAll(
 
   return seqAsync(targets, async target => {
     await page.goto(target.url)
+    if (target.hidden) {
+      await page.addStyleTag({
+        content: generateStyleToHide(target.hidden)
+      })
+    }
     const els = await getCaptureElement(page, target.target)
 
-    return Promise.all(els.map(async el => {
-      const tempPath = path.join(
-        tempDir,
-        `block-capture-image-${Date.now().toString(16)}.png`
-      )
-      await el.screenshot({ path: tempPath })
-      const image = await readFile(tempPath)
-      await unlink(tempPath)
+    return Promise.all(
+      els.map(async el => {
+        const tempPath = path.join(
+          tempDir,
+          `block-capture-image-${Date.now().toString(16)}.png`
+        )
+        await el.screenshot({ path: tempPath })
+        const image = await readFile(tempPath)
+        await unlink(tempPath)
 
-      return {
-        image,
-        url: target.url,
-        target: target.target || 'html'
-      }
-    }))
+        return {
+          image,
+          url: target.url,
+          target: target.target || 'html',
+          hidden: target.hidden || []
+        }
+      })
+    )
   })
     .then(flatten)
-    .then(res => {
-      browser.close()
-      return res
-    })
-    .catch(err => {
-      browser.close()
-      throw err
-    })
+    .then(
+      res => {
+        browser.close()
+        return res
+      },
+      err => {
+        browser.close()
+        throw err
+      }
+    )
 }
 
-function getCaptureElement(page: puppeteer.Page, selector: string | undefined): Promise<puppeteer.ElementHandle[]> {
+function getCaptureElement(
+  page: puppeteer.Page,
+  selector: string | undefined
+): Promise<puppeteer.ElementHandle[]> {
   return page.$$(selector || 'html')
+}
+
+function generateStyleToHide(selectors: string[]): string {
+  return `${selectors.join(',')} { visibility: hidden !important; }`
 }
 
 function flatten<T>(list: T[][]): T[] {

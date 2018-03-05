@@ -12,14 +12,27 @@ describe('Snapshot test', async () => {
   })
 
   it('should narrow capture element by selector', async () => {
-    const res = await captureAll([{
-      url: fixtureUrl,
-      target: '.paragraph'
-    }])
+    const res = await captureAll([
+      {
+        url: fixtureUrl,
+        target: '.paragraph'
+      }
+    ])
     expect(res.length).toBe(2)
     expect(res[0].target).toBe('.paragraph')
     expect(res[0].image).toMatchImageSnapshot()
     expect(res[1].target).toBe('.paragraph')
     expect(res[1].image).toMatchImageSnapshot()
+  })
+
+  it('should hide specified selectors', async () => {
+    const res = await captureAll([
+      {
+        url: fixtureUrl,
+        hidden: ['#title', '#sub-title']
+      }
+    ])
+    expect(res[0].image).toMatchImageSnapshot()
+    expect(res[0].hidden).toEqual(['#title', '#sub-title'])
   })
 })
