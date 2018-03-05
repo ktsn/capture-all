@@ -45,7 +45,7 @@ captureAll([
 
 ## API
 
-### `captureAll(targets: CaptureTarget[]): CaptureResult[]`
+### `captureAll(targets: CaptureTarget[]): Promise<CaptureResult[]>`
 
 Capture screenshots of Web pages which specified by `targets` and return an array of `CaptureResult` object including captured image buffer.
 
