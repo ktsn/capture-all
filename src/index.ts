@@ -36,7 +36,7 @@ export default async function captureAll(
   return seqAsync(targets, async target => {
     await page.goto(target.url)
     if (target.viewport) {
-      page.setViewport(target.viewport)
+      await page.setViewport(target.viewport)
     }
     if (target.hidden) {
       await page.addStyleTag({
