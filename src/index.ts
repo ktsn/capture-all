@@ -36,50 +36,34 @@ export default async function captureAll(
         content: generateStyleToHide(target.hidden)
       })
     }
-    const els = await getCaptureElement(page, target.target)
+    const el = await page.$(target.target || 'html')
+    if (!el) {
+      return
+    }
 
-    return Promise.all(
-      els.map(async el => {
-        const image = await el.screenshot()
+    const image = await el.screenshot()
 
-        return {
-          image,
-          url: target.url,
-          target: target.target || 'html',
-          hidden: target.hidden || [],
-          viewport: page.viewport()
-        }
-      })
-    )
-  })
-    .then(flatten)
-    .then(
-      res => {
-        browser.close()
-        return res
-      },
-      err => {
-        browser.close()
-        throw err
-      }
-    )
-}
-
-function getCaptureElement(
-  page: puppeteer.Page,
-  selector: string | undefined
-): Promise<puppeteer.ElementHandle[]> {
-  return page.$$(selector || 'html')
+    return {
+      image,
+      url: target.url,
+      target: target.target || 'html',
+      hidden: target.hidden || [],
+      viewport: page.viewport()
+    }
+  }).then(
+    res => {
+      browser.close()
+      return res.filter(<T>(x: T | undefined): x is T => x !== undefined)
+    },
+    err => {
+      browser.close()
+      throw err
+    }
+  )
 }
 
 function generateStyleToHide(selectors: string[]): string {
   return `${selectors.join(',')} { visibility: hidden !important; }`
-}
-
-function flatten<T>(list: T[][]): T[] {
-  return list.reduce<T[]>((acc, child) => {
-    return acc.concat(child)
-  }, [])
 }
 
 function seqAsync<T, R>(list: T[], fn: (item: T) => Promise<R>): Promise<R[]> {

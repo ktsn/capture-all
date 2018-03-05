@@ -23,11 +23,9 @@ describe('Snapshot test', async () => {
         target: '.paragraph'
       }
     ])
-    expect(res.length).toBe(2)
+    expect(res.length).toBe(1)
     expect(res[0].target).toBe('.paragraph')
     expect(res[0].image).toMatchImageSnapshot()
-    expect(res[1].target).toBe('.paragraph')
-    expect(res[1].image).toMatchImageSnapshot()
   })
 
   it('should hide specified selectors', async () => {
