@@ -8,12 +8,13 @@ export interface CaptureParams {
   hidden: string[]
   viewport: Viewport
   imagePath: string
+  options?: puppeteer.LaunchOptions
 }
 
 assert(process.send, 'capture.js must be executed in a child process')
 
 async function capture(target: CaptureParams): Promise<void> {
-  const browser = await puppeteer.launch()
+  const browser = await puppeteer.launch(target.options)
   const page = await browser.newPage()
 
   await page.goto(target.url)

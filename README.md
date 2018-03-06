@@ -56,6 +56,7 @@ Capture screenshots of Web pages which specified by `targets` and return an arra
 `CaptureOptions` may have the following properties:
 
 * `concurrency`: a number of process which will be created for capture
+* `puppeteer`: an object passed to [`puppeteer.launch`](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions)
 
 `CaptureResult` has the following properties:
 

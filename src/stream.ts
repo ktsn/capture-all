@@ -6,6 +6,7 @@ import { Stream, Readable, ReadableOptions } from 'stream'
 import tempDir = require('temp-dir')
 import { CaptureTarget, CaptureResult, CaptureOptions } from './index'
 import { CaptureParams } from './capture'
+import { LaunchOptions } from 'puppeteer'
 
 export interface ReadableStream<T> extends NodeJS.ReadableStream, Stream {
   push(data: T): boolean
@@ -73,7 +74,9 @@ export class ReadableStreamImpl extends Readable
     assert(targets.length > 0, 'capture target must have at least one')
 
     const concurrency = Math.min(targets.length, options.concurrency || 4)
-    this.processes = range(concurrency).map(() => new ProcessWrapper())
+    this.processes = range(concurrency).map(
+      () => new ProcessWrapper(options.puppeteer)
+    )
     this.remainingTargets = targets.slice()
   }
 
@@ -139,6 +142,8 @@ export class ProcessWrapper {
 
   isRunning = false
 
+  constructor(private options: LaunchOptions | undefined) {}
+
   run(target: CaptureTarget): Promise<CaptureResult | undefined> {
     const imagePath =
       path.join(tempDir, `${Date.now()}-${Math.random().toString(16)}`) + '.png'
@@ -151,7 +156,8 @@ export class ProcessWrapper {
         width: 800,
         height: 600
       },
-      imagePath
+      imagePath,
+      options: this.options
     }
 
     return new Promise((resolve, reject) => {

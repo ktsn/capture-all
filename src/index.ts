@@ -25,6 +25,7 @@ export interface CaptureResult {
 
 export interface CaptureOptions {
   concurrency?: number
+  puppeteer?: puppeteer.LaunchOptions
 }
 
 export function captureAll(
