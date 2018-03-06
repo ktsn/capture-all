@@ -12,12 +12,9 @@ export interface CaptureParams {
 
 assert(process.send, 'capture.js must be executed in a child process')
 
-let browser: puppeteer.Browser | undefined
-let page: puppeteer.Page | undefined
-
 async function capture(target: CaptureParams): Promise<void> {
-  browser = browser || (await puppeteer.launch())
-  page = page || (await browser.newPage())
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
 
   await page.goto(target.url)
   await page.setViewport(target.viewport)
@@ -33,6 +30,7 @@ async function capture(target: CaptureParams): Promise<void> {
   }
 
   await el.screenshot({ path: target.imagePath })
+  await browser.close()
 }
 
 function generateStyleToHide(selectors: string[]): string {
@@ -47,10 +45,4 @@ process.on('message', data => {
     .catch(err => {
       process.send!(err.message)
     })
-})
-
-process.on('exit', () => {
-  if (browser) {
-    browser.close()
-  }
 })

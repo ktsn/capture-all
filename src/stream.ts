@@ -135,6 +135,7 @@ export class ProcessWrapper {
   run(target: CaptureTarget): Promise<CaptureResult | undefined> {
     const imagePath =
       path.join(tempDir, `${Date.now()}-${Math.random().toString(16)}`) + '.png'
+
     const params: CaptureParams = {
       url: target.url,
       target: target.target || 'html',
