@@ -1,3 +1,4 @@
+import assert = require('assert')
 import * as path from 'path'
 import * as fse from 'fs-extra'
 import { fork } from 'child_process'
@@ -69,7 +70,9 @@ export class ReadableStreamImpl extends Readable
     super({
       objectMode: true
     })
-    const concurrency = options.concurrency || 4
+    assert(targets.length > 0, 'capture target must have at least one')
+
+    const concurrency = Math.min(targets.length, options.concurrency || 4)
     this.processes = range(concurrency).map(() => new ProcessWrapper())
     this.remainingTargets = targets.slice()
   }
