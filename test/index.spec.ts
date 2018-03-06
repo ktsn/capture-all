@@ -1,11 +1,13 @@
 import * as path from 'path'
-import captureAll from '../src/index'
+import { captureAll, createCaptureStream } from '../src/index'
 
 describe('Snapshot test', async () => {
   const fixtureUrl = 'file://' + path.resolve(__dirname, 'fixture.html')
 
   it('should capture web page', async () => {
-    const res = await captureAll([{ url: fixtureUrl }])
+    const res = await captureAll([{ url: fixtureUrl }], {
+      concurrency: 1
+    })
     expect(res[0].url).toBe(fixtureUrl)
     expect(res[0].target).toBe('html')
     expect(res[0].hidden).toEqual([])
@@ -53,6 +55,25 @@ describe('Snapshot test', async () => {
     expect(res[0].viewport).toEqual({
       width: 320,
       height: 480
+    })
+  })
+
+  it('should create capture stream', done => {
+    const mock = jest.fn()
+    const stream = createCaptureStream(
+      [
+        {
+          url: fixtureUrl
+        }
+      ],
+      {
+        concurrency: 1
+      }
+    )
+    stream.on('data', mock)
+    stream.on('end', () => {
+      expect(mock).toHaveBeenCalledTimes(1)
+      done()
     })
   })
 })

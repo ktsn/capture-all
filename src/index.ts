@@ -1,4 +1,7 @@
 import * as puppeteer from 'puppeteer'
+import { ReadableStream, ReadableStreamImpl } from './stream'
+
+export { ReadableStream }
 
 export interface Viewport {
   width: number
@@ -20,56 +23,30 @@ export interface CaptureResult {
   viewport: Viewport
 }
 
-export default async function captureAll(
-  targets: CaptureTarget[]
+export interface CaptureOptions {
+  concurrency?: number
+}
+
+export function captureAll(
+  targets: CaptureTarget[],
+  options: CaptureOptions = {}
 ): Promise<CaptureResult[]> {
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
+  const stream = createCaptureStream(targets, options)
+  const result: CaptureResult[] = []
 
-  return seqAsync(targets, async target => {
-    await page.goto(target.url)
-    if (target.viewport) {
-      await page.setViewport(target.viewport)
-    }
-    if (target.hidden) {
-      await page.addStyleTag({
-        content: generateStyleToHide(target.hidden)
-      })
-    }
-    const el = await page.$(target.target || 'html')
-    if (!el) {
-      return
-    }
+  stream.on('data', data => {
+    result.push(data)
+  })
 
-    const image = await el.screenshot()
-
-    return {
-      image,
-      url: target.url,
-      target: target.target || 'html',
-      hidden: target.hidden || [],
-      viewport: page.viewport()
-    }
-  }).then(
-    res => {
-      browser.close()
-      return res.filter(<T>(x: T | undefined): x is T => x !== undefined)
-    },
-    err => {
-      browser.close()
-      throw err
-    }
-  )
+  return new Promise((resolve, reject) => {
+    stream.on('end', () => resolve(result))
+    stream.on('error', reject)
+  })
 }
 
-function generateStyleToHide(selectors: string[]): string {
-  return `${selectors.join(',')} { visibility: hidden !important; }`
-}
-
-function seqAsync<T, R>(list: T[], fn: (item: T) => Promise<R>): Promise<R[]> {
-  return list.reduce<Promise<R[]>>(async (acc, item) => {
-    const res = await acc
-    const next = await fn(item)
-    return res.concat(next)
-  }, Promise.resolve([]))
+export function createCaptureStream(
+  targets: CaptureTarget[],
+  options: CaptureOptions = {}
+): ReadableStream<CaptureResult> {
+  return new ReadableStreamImpl(targets, options)
 }
