@@ -26,11 +26,10 @@ async function capture(target: CaptureParams): Promise<void> {
   }
 
   const el = await page.$(target.target)
-  if (!el) {
-    return
+  if (el) {
+    await el.screenshot({ path: target.imagePath })
   }
 
-  await el.screenshot({ path: target.imagePath })
   await browser.close()
 }
 
