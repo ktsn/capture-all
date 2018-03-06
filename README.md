@@ -13,10 +13,7 @@ $ yarn add capture-all
 ## Example
 
 ```js
-import captureAll from 'capture-all'
-// or
-const captureAll = require('capture-all').default
-
+const { captureAll } = require('capture-all')
 const fs = require('fs')
 
 captureAll([
@@ -45,7 +42,7 @@ captureAll([
 
 ## API
 
-### `captureAll(targets: CaptureTarget[]): Promise<CaptureResult[]>`
+### `captureAll(targets: CaptureTarget[], options?: CaptureOptions): Promise<CaptureResult[]>`
 
 Capture screenshots of Web pages which specified by `targets` and return an array of `CaptureResult` object including captured image buffer.
 
@@ -56,6 +53,10 @@ Capture screenshots of Web pages which specified by `targets` and return an arra
 * `hidden`: an array of selector to hide matched elements from captured image
 * `viewport`: viewport size of browser
 
+`CaptureOptions` may have the following properties:
+
+* `concurrency`: a number of process which will be created for capture
+
 `CaptureResult` has the following properties:
 
 * `image`: captured image buffer
@@ -63,6 +64,10 @@ Capture screenshots of Web pages which specified by `targets` and return an arra
 * `target`: a selector of captured element
 * `hidden`: an array of selector which is hidden from captured image
 * `viewport`: viewport size of browser
+
+### `createCaptureStream(targets: CaptureTarget[], options?: CaptureOptions): ReadableStream<CaptureResult>`
+
+Similar to `captureAll` but returns readable stream of `CaptureResult` instead.
 
 ## License
 
