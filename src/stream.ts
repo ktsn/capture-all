@@ -85,6 +85,10 @@ export class ReadableStreamImpl extends Readable
   }
 
   startProcess(p: ProcessWrapper): void {
+    if (p.isRunning) {
+      return
+    }
+
     const target = this.remainingTargets.shift()
     if (!target) {
       if (this.finishedAllProcesses() && !this.torndown) {
@@ -117,7 +121,7 @@ export class ReadableStreamImpl extends Readable
   }
 
   _read(size: number): void {
-    this.processes.filter(p => !p.isRunning).forEach(p => {
+    this.processes.forEach(p => {
       this.startProcess(p)
     })
   }
