@@ -1,5 +1,5 @@
 import * as path from 'path'
-import captureAll from '../src/index'
+import { captureAll } from '../src/index'
 
 describe('Snapshot test', async () => {
   const fixtureUrl = 'file://' + path.resolve(__dirname, 'fixture.html')
