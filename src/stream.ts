@@ -1,7 +1,10 @@
 import * as path from 'path'
+import * as fse from 'fs-extra'
 import { fork } from 'child_process'
 import { Stream, Readable, ReadableOptions } from 'stream'
+import tempDir = require('temp-dir')
 import { CaptureTarget, CaptureResult, CaptureOptions } from './index'
+import { CaptureParams } from './capture'
 
 export interface ReadableStream<T> extends NodeJS.ReadableStream, Stream {
   push(data: T): boolean
@@ -60,6 +63,7 @@ export class ReadableStreamImpl extends Readable
   implements ReadableStream<CaptureResult> {
   remainingTargets: CaptureTarget[]
   processes: ProcessWrapper[]
+  torndown = false
 
   constructor(targets: CaptureTarget[], options: CaptureOptions) {
     super({
@@ -71,13 +75,16 @@ export class ReadableStreamImpl extends Readable
   }
 
   teardown(): void {
-    this.processes.forEach(p => p.close())
+    if (!this.torndown) {
+      this.torndown = true
+      this.processes.forEach(p => p.close())
+    }
   }
 
   startProcess(p: ProcessWrapper): void {
     const target = this.remainingTargets.shift()
     if (!target) {
-      if (this.finishedAllProcesses()) {
+      if (this.finishedAllProcesses() && !this.torndown) {
         this.push(null)
         this.teardown()
       }
@@ -97,7 +104,6 @@ export class ReadableStreamImpl extends Readable
         }
       })
       .catch(err => {
-        debugger
         process.nextTick(() => this.emit('error', err))
         this.teardown()
       })
@@ -121,26 +127,53 @@ export class ReadableStreamImpl extends Readable
 
 export class ProcessWrapper {
   private cp = process.env.NODE_ENV === 'test'
-    ? fork(path.resolve(__dirname, '../lib/capture'), [], {
-        stdio: 'inherit' as any
-      })
+    ? fork(path.resolve(__dirname, '../lib/capture'))
     : fork(require.resolve('./capture'))
+
   isRunning = false
 
   run(target: CaptureTarget): Promise<CaptureResult | undefined> {
-    debugger
+    const imagePath =
+      path.join(tempDir, `${Date.now()}-${Math.random().toString(16)}`) + '.png'
+    const params: CaptureParams = {
+      url: target.url,
+      target: target.target || 'html',
+      hidden: target.hidden || [],
+      viewport: target.viewport || {
+        width: 800,
+        height: 600
+      },
+      imagePath
+    }
+
     return new Promise((resolve, reject) => {
       this.isRunning = true
-      this.cp.send(target)
-      this.cp.once('message', result => {
+      this.cp.send(params)
+      this.cp.once('message', err => {
         this.isRunning = false
-        if (result.failed) {
-          return reject(result.error)
+        if (err) {
+          return reject(new Error(err))
         }
-        resolve(result.value)
-      })
-      this.cp.once('error', err => {
-        reject(err)
+
+        fse
+          .readFile(imagePath)
+          .then(buf => {
+            return fse.unlink(imagePath).then(() => buf)
+          })
+          .then(buf => {
+            const result = {
+              image: buf,
+              url: params.url,
+              target: params.target,
+              hidden: params.hidden,
+              viewport: params.viewport
+            }
+
+            resolve(result)
+          })
+          .catch(() => {
+            resolve()
+          })
       })
     })
   }

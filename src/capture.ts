@@ -1,42 +1,38 @@
 import assert = require('assert')
 import * as puppeteer from 'puppeteer'
-import { CaptureTarget, CaptureResult } from './index'
+import { Viewport } from './index'
+
+export interface CaptureParams {
+  url: string
+  target: string
+  hidden: string[]
+  viewport: Viewport
+  imagePath: string
+}
 
 assert(process.send, 'capture.js must be executed in a child process')
 
 let browser: puppeteer.Browser | undefined
 let page: puppeteer.Page | undefined
 
-async function capture(
-  target: CaptureTarget
-): Promise<CaptureResult | undefined> {
+async function capture(target: CaptureParams): Promise<void> {
   browser = browser || (await puppeteer.launch())
   page = page || (await browser.newPage())
 
   await page.goto(target.url)
-  if (target.viewport) {
-    await page.setViewport(target.viewport)
-  }
-  if (target.hidden) {
+  await page.setViewport(target.viewport)
+  if (target.hidden.length > 0) {
     await page.addStyleTag({
       content: generateStyleToHide(target.hidden)
     })
   }
 
-  const el = await page.$(target.target || 'html')
+  const el = await page.$(target.target)
   if (!el) {
     return
   }
 
-  const image = await el.screenshot()
-
-  return {
-    image,
-    url: target.url,
-    target: target.target || 'html',
-    hidden: target.hidden || [],
-    viewport: page.viewport()
-  }
+  await el.screenshot({ path: target.imagePath })
 }
 
 function generateStyleToHide(selectors: string[]): string {
@@ -45,10 +41,16 @@ function generateStyleToHide(selectors: string[]): string {
 
 process.on('message', data => {
   capture(data)
-    .then(value => {
-      process.send!({ failed: false, value })
+    .then(() => {
+      process.send!(null)
     })
     .catch(err => {
-      process.send!({ failed: true, error: err })
+      process.send!(err.message)
     })
+})
+
+process.on('exit', () => {
+  if (browser) {
+    browser.close()
+  }
 })
