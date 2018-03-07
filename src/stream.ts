@@ -83,7 +83,7 @@ export class ReadableStreamImpl extends Readable
   }
 
   startProcess(p: PuppeteerWrapper): void {
-    if (p.isRunning) {
+    if (p.isRunning || p.isClosed) {
       return
     }
 
@@ -96,9 +96,8 @@ export class ReadableStreamImpl extends Readable
       return
     }
 
-    p
-      .run(target)
-      .then(result => {
+    p.run(target).then(
+      result => {
         if (!result) {
           return this.startProcess(p)
         }
@@ -107,11 +106,12 @@ export class ReadableStreamImpl extends Readable
         if (shouldContinue) {
           return this.startProcess(p)
         }
-      })
-      .catch(err => {
+      },
+      err => {
         process.nextTick(() => this.emit('error', err))
         this.teardown()
-      })
+      }
+    )
   }
 
   finishedAllProcesses(): boolean {
@@ -135,8 +135,18 @@ export class PuppeteerWrapper {
   private page: puppeteer.Page | undefined
 
   isRunning = false
+  isClosed = false
 
-  constructor(private options: puppeteer.LaunchOptions | undefined) {}
+  signals = ['exit', 'SIGTERM', 'SIGINT', 'SIGHUP']
+  signalListener = () => {
+    this.close(true)
+  }
+
+  constructor(private options: puppeteer.LaunchOptions | undefined) {
+    this.signals.forEach(event => {
+      process.on(event as any, this.signalListener)
+    })
+  }
 
   async run(target: CaptureTarget): Promise<CaptureResult | undefined> {
     if (!this.browser) {
@@ -144,6 +154,7 @@ export class PuppeteerWrapper {
       this.page = await this.browser.newPage()
     }
 
+    assert(!this.isClosed, 'already closed')
     assert(!this.isRunning, 'must not capture in parallel')
     this.isRunning = true
 
@@ -180,14 +191,32 @@ export class PuppeteerWrapper {
         hidden: t.hidden,
         viewport: t.viewport
       }
+    } catch (e) {
+      if (!this.isClosed) {
+        throw e
+      }
     } finally {
       this.isRunning = false
     }
   }
 
-  close(): void {
+  close(fromSignal: boolean = false): void {
+    assert(!this.isClosed, 'already closed')
+
+    this.signals.forEach(event => {
+      process.removeListener(event, this.signalListener)
+    })
+
     if (this.browser) {
-      this.browser.close()
+      this.isRunning = false
+      this.isClosed = true
+
+      // If this is called by signal,
+      // the browser process will be exited automatically
+      if (!fromSignal) {
+        this.browser.close()
+      }
+
       this.browser = undefined
       this.page = undefined
     }
