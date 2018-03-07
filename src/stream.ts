@@ -1,12 +1,7 @@
 import assert = require('assert')
-import * as path from 'path'
-import * as fse from 'fs-extra'
-import { fork } from 'child_process'
+import * as puppeteer from 'puppeteer'
 import { Stream, Readable, ReadableOptions } from 'stream'
-import tempDir = require('temp-dir')
 import { CaptureTarget, CaptureResult, CaptureOptions } from './index'
-import { CaptureParams } from './capture'
-import { LaunchOptions } from 'puppeteer'
 
 export interface ReadableStream<T> extends NodeJS.ReadableStream, Stream {
   push(data: T): boolean
@@ -64,7 +59,7 @@ export interface ReadableStream<T> extends NodeJS.ReadableStream, Stream {
 export class ReadableStreamImpl extends Readable
   implements ReadableStream<CaptureResult> {
   remainingTargets: CaptureTarget[]
-  processes: ProcessWrapper[]
+  processes: PuppeteerWrapper[]
   torndown = false
 
   constructor(targets: CaptureTarget[], options: CaptureOptions) {
@@ -75,7 +70,7 @@ export class ReadableStreamImpl extends Readable
 
     const concurrency = Math.min(targets.length, options.concurrency || 4)
     this.processes = range(concurrency).map(
-      () => new ProcessWrapper(options.puppeteer)
+      () => new PuppeteerWrapper(options.puppeteer)
     )
     this.remainingTargets = targets.slice()
   }
@@ -87,7 +82,7 @@ export class ReadableStreamImpl extends Readable
     }
   }
 
-  startProcess(p: ProcessWrapper): void {
+  startProcess(p: PuppeteerWrapper): void {
     if (p.isRunning) {
       return
     }
@@ -135,66 +130,70 @@ export class ReadableStreamImpl extends Readable
   }
 }
 
-export class ProcessWrapper {
-  private cp = process.env.NODE_ENV === 'test'
-    ? fork(path.resolve(__dirname, '../lib/capture'))
-    : fork(require.resolve('./capture'))
+export class PuppeteerWrapper {
+  private browser: puppeteer.Browser | undefined
 
   isRunning = false
 
-  constructor(private options: LaunchOptions | undefined) {}
+  constructor(private options: puppeteer.LaunchOptions | undefined) {}
 
-  run(target: CaptureTarget): Promise<CaptureResult | undefined> {
-    const imagePath =
-      path.join(tempDir, `${Date.now()}-${Math.random().toString(16)}`) + '.png'
+  async run(target: CaptureTarget): Promise<CaptureResult | undefined> {
+    if (!this.browser) {
+      this.browser = await puppeteer.launch(this.options)
+    }
 
-    const params: CaptureParams = {
-      url: target.url,
+    assert(!this.isRunning, 'must not capture in parallel')
+    this.isRunning = true
+
+    const t = {
       target: target.target || 'html',
       hidden: target.hidden || [],
       viewport: target.viewport || {
         width: 800,
         height: 600
       },
-      imagePath,
-      options: this.options
+      ...target
     }
 
-    return new Promise((resolve, reject) => {
-      this.isRunning = true
-      this.cp.send(params)
-      this.cp.once('message', err => {
-        this.isRunning = false
-        if (err) {
-          return reject(new Error(err))
-        }
+    try {
+      const page = await this.browser.newPage()
 
-        fse
-          .readFile(imagePath)
-          .then(buf => {
-            return fse.unlink(imagePath).then(() => buf)
-          })
-          .then(buf => {
-            const result = {
-              image: buf,
-              url: params.url,
-              target: params.target,
-              hidden: params.hidden,
-              viewport: params.viewport
-            }
+      await page.goto(t.url)
+      await page.setViewport(t.viewport)
+      if (t.hidden.length > 0) {
+        await page.addStyleTag({
+          content: generateStyleToHide(t.hidden)
+        })
+      }
 
-            resolve(result)
-          })
-          .catch(() => {
-            resolve()
-          })
-      })
-    })
+      const el = await page.$(t.target)
+      if (!el) {
+        return
+      }
+
+      return {
+        image: await el.screenshot(),
+        url: t.url,
+        target: t.target,
+        hidden: t.hidden,
+        viewport: t.viewport
+      }
+    } finally {
+      this.isRunning = false
+    }
   }
 
   close(): void {
-    this.cp.kill()
+    if (this.browser) {
+      assert(!this.isRunning, 'still capturing')
+      this.browser.close()
+      this.browser = undefined
+    }
   }
+}
+
+function generateStyleToHide(selectors: string[]): string {
+  return `${selectors.join(',')} { visibility: hidden !important; }`
 }
 
 function range(len: number): number[] {

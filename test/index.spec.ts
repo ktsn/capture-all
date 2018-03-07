@@ -1,5 +1,6 @@
 import * as path from 'path'
 import * as fs from 'fs'
+// @ts-ignore
 import tempDir = require('temp-dir')
 import { captureAll, createCaptureStream } from '../src/index'
 
