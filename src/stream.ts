@@ -3,8 +3,9 @@ import * as puppeteer from 'puppeteer'
 import { Stream, Readable, ReadableOptions } from 'stream'
 import { CaptureTarget, CaptureResult, CaptureOptions } from './index'
 
-export interface ReadableStream<T> extends NodeJS.ReadableStream, Stream {
+export interface ReadableStream<T> extends Readable {
   push(data: T): boolean
+  unshift(chunk: T): void
 
   addListener(event: 'close', listener: () => void): this
   addListener(event: 'data', listener: (chunk: T) => void): this
@@ -27,12 +28,12 @@ export interface ReadableStream<T> extends NodeJS.ReadableStream, Stream {
   on(event: 'error', listener: (err: Error) => void): this
   on(event: string, listener: (...args: any[]) => void): this
 
-  once(event: string, listener: (...args: any[]) => void): this
   once(event: 'close', listener: () => void): this
   once(event: 'data', listener: (chunk: T) => void): this
   once(event: 'end', listener: () => void): this
   once(event: 'readable', listener: () => void): this
   once(event: 'error', listener: (err: Error) => void): this
+  once(event: string, listener: (...args: any[]) => void): this
 
   prependListener(event: 'close', listener: () => void): this
   prependListener(event: 'data', listener: (chunk: T) => void): this
