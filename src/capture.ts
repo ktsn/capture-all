@@ -15,22 +15,25 @@ assert(process.send, 'capture.js must be executed in a child process')
 
 async function capture(target: CaptureParams): Promise<void> {
   const browser = await puppeteer.launch(target.options)
-  const page = await browser.newPage()
 
-  await page.goto(target.url)
-  await page.setViewport(target.viewport)
-  if (target.hidden.length > 0) {
-    await page.addStyleTag({
-      content: generateStyleToHide(target.hidden)
-    })
+  try {
+    const page = await browser.newPage()
+
+    await page.goto(target.url)
+    await page.setViewport(target.viewport)
+    if (target.hidden.length > 0) {
+      await page.addStyleTag({
+        content: generateStyleToHide(target.hidden)
+      })
+    }
+
+    const el = await page.$(target.target)
+    if (el) {
+      await el.screenshot({ path: target.imagePath })
+    }
+  } finally {
+    await browser.close()
   }
-
-  const el = await page.$(target.target)
-  if (el) {
-    await el.screenshot({ path: target.imagePath })
-  }
-
-  await browser.close()
 }
 
 function generateStyleToHide(selectors: string[]): string {
