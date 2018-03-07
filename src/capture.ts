@@ -40,9 +40,13 @@ function generateStyleToHide(selectors: string[]): string {
 process.on('message', data => {
   capture(data)
     .then(() => {
-      process.send!(null)
+      if (process.connected) {
+        process.send!(null)
+      }
     })
     .catch(err => {
-      process.send!(err.message)
+      if (process.connected) {
+        process.send!(err.message)
+      }
     })
 })
