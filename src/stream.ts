@@ -132,6 +132,7 @@ export class ReadableStreamImpl extends Readable
 
 export class PuppeteerWrapper {
   private browser: puppeteer.Browser | undefined
+  private page: puppeteer.Page | undefined
 
   isRunning = false
 
@@ -140,6 +141,7 @@ export class PuppeteerWrapper {
   async run(target: CaptureTarget): Promise<CaptureResult | undefined> {
     if (!this.browser) {
       this.browser = await puppeteer.launch(this.options)
+      this.page = await this.browser.newPage()
     }
 
     assert(!this.isRunning, 'must not capture in parallel')
@@ -155,9 +157,9 @@ export class PuppeteerWrapper {
       ...target
     }
 
-    try {
-      const page = await this.browser.newPage()
+    const page = this.page!
 
+    try {
       await page.goto(t.url)
       await page.setViewport(t.viewport)
       if (t.hidden.length > 0) {
@@ -185,9 +187,9 @@ export class PuppeteerWrapper {
 
   close(): void {
     if (this.browser) {
-      assert(!this.isRunning, 'still capturing')
       this.browser.close()
       this.browser = undefined
+      this.page = undefined
     }
   }
 }
