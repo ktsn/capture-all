@@ -150,14 +150,14 @@ export class PuppeteerWrapper {
   }
 
   async run(target: CaptureTarget): Promise<CaptureResult | undefined> {
+    assert(!this.isClosed, 'already closed')
+    assert(!this.isRunning, 'must not capture in parallel')
+    this.isRunning = true
+
     if (!this.browser) {
       this.browser = await puppeteer.launch(this.options)
       this.page = await this.browser.newPage()
     }
-
-    assert(!this.isClosed, 'already closed')
-    assert(!this.isRunning, 'must not capture in parallel')
-    this.isRunning = true
 
     const t = {
       url: target.url,
