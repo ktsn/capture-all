@@ -160,9 +160,9 @@ export class PuppeteerWrapper {
     this.isRunning = true
 
     const t = {
-      target: target.target || 'html',
-      hidden: target.hidden || [],
-      viewport: target.viewport || {
+      target: 'html',
+      hidden: [],
+      viewport: {
         width: 800,
         height: 600
       },
