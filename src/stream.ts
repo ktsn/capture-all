@@ -160,13 +160,13 @@ export class PuppeteerWrapper {
     this.isRunning = true
 
     const t = {
+      url: target.url,
       target: target.target || 'html',
       hidden: target.hidden || [],
       viewport: target.viewport || {
         width: 800,
         height: 600
-      },
-      ...target
+      }
     }
 
     const page = this.page!
