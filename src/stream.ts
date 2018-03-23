@@ -172,7 +172,7 @@ export class PuppeteerWrapper {
     const page = this.page!
 
     try {
-      await page.goto(t.url)
+      await page.goto(t.url, { timeout: 0 })
       await page.setViewport(t.viewport)
       if (t.hidden.length > 0) {
         await page.addStyleTag({
