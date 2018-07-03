@@ -172,8 +172,8 @@ export class PuppeteerWrapper {
     const page = this.page!
 
     try {
-      await page.goto(t.url, { timeout: 0 })
       await page.setViewport(t.viewport)
+      await page.goto(t.url, { timeout: 0 })
       if (t.hidden.length > 0) {
         await page.addStyleTag({
           content: generateStyleToHide(t.hidden)
