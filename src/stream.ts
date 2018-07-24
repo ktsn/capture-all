@@ -163,6 +163,7 @@ export class PuppeteerWrapper {
       url: target.url,
       target: target.target || 'html',
       hidden: target.hidden || [],
+      remove: target.remove || [],
       viewport: target.viewport || {
         width: 800,
         height: 600
@@ -174,9 +175,16 @@ export class PuppeteerWrapper {
     try {
       await page.setViewport(t.viewport)
       await page.goto(t.url, { timeout: 0 })
+
       if (t.hidden.length > 0) {
         await page.addStyleTag({
           content: generateStyleToHide(t.hidden)
+        })
+      }
+
+      if (t.remove.length > 0) {
+        await page.addStyleTag({
+          content: generateStyleToRemove(t.remove)
         })
       }
 
@@ -190,6 +198,7 @@ export class PuppeteerWrapper {
         url: t.url,
         target: t.target,
         hidden: t.hidden,
+        remove: t.remove,
         viewport: t.viewport
       }
     } catch (e) {
@@ -226,6 +235,10 @@ export class PuppeteerWrapper {
 
 function generateStyleToHide(selectors: string[]): string {
   return `${selectors.join(',')} { visibility: hidden !important; }`
+}
+
+function generateStyleToRemove(selectors: string[]): string {
+  return `${selectors.join(',')} { display: none !important; }`
 }
 
 function range(len: number): number[] {

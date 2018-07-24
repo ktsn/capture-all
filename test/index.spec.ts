@@ -44,6 +44,17 @@ describe('Snapshot test', async () => {
     expect(res[0].hidden).toEqual(['#title', '#sub-title'])
   })
 
+  it('should remove specified selectors', async () => {
+    const res = await captureAll([
+      {
+        url: fixtureUrl,
+        remove: ['#title', '#sub-title']
+      }
+    ])
+    expect(res[0].image).toMatchImageSnapshot()
+    expect(res[0].remove).toEqual(['#title', '#sub-title'])
+  })
+
   it('should resolve viewport size', async () => {
     const res = await captureAll([
       {

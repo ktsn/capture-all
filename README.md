@@ -24,8 +24,11 @@ captureAll([
     // Selector for capturing element
     target: 'body',
 
-    // Selectors to hide from capture
-    hidden: ['#gb', '#fbar'],
+    // Selectors to hide from capture (add `visibility: hidden;` to the elements)
+    hidden: ['#gb'],
+
+    // Selectors to remove from capture (add `display: none;` to the elements)
+    remove: ['#fbar'],
 
     // Viewport size of a browser
     viewport: {
@@ -51,6 +54,7 @@ Capture screenshots of Web pages which specified by `targets` and return an arra
 * `url`: Web page URL which will be captured (required)
 * `target`: a selector for capturing element
 * `hidden`: an array of selector to hide matched elements from captured image
+* `remove`: an array of selector to remove matched elements from captured image
 * `viewport`: viewport size of browser
 
 `CaptureOptions` may have the following properties:
@@ -64,6 +68,7 @@ Capture screenshots of Web pages which specified by `targets` and return an arra
 * `url`: captured Web page URL
 * `target`: a selector of captured element
 * `hidden`: an array of selector which is hidden from captured image
+* `remove`: an array of selector which is removed from captured image
 * `viewport`: viewport size of browser
 
 ### `createCaptureStream(targets: CaptureTarget[], options?: CaptureOptions): ReadableStream<CaptureResult>`

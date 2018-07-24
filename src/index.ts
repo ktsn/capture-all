@@ -12,6 +12,7 @@ export interface CaptureTarget {
   url: string
   target?: string
   hidden?: string[]
+  remove?: string[]
   viewport?: Viewport
 }
 
@@ -20,6 +21,7 @@ export interface CaptureResult {
   url: string
   target: string
   hidden: string[]
+  remove: string[]
   viewport: Viewport
 }
 
