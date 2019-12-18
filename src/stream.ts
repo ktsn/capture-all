@@ -125,7 +125,7 @@ export class ReadableStreamImpl extends Readable
     })
   }
 
-  _destroy(err: Error, callback: Function): void {
+  _destroy(err: Error, callback: (error?: Error | null) => void): void {
     super._destroy(err, callback)
     this.teardown()
   }
@@ -194,7 +194,7 @@ export class PuppeteerWrapper {
       }
 
       return {
-        image: await el.screenshot(),
+        image: await el.screenshot({ encoding: 'binary' }),
         url: t.url,
         target: t.target,
         hidden: t.hidden,

@@ -24,13 +24,13 @@
     "url": "https://github.com/ktsn/capture-all.git"
   },
   "scripts": {
-    "prepublishOnly": "npm run clean && npm run test && npm run build",
+    "prepublishOnly": "yarn clean && yarn test && yarn build",
     "clean": "rm -rf lib",
     "build": "tsc -p src",
     "dev": "jest --watch",
     "lint": "tslint -p . && prettier --list-different \"{src,scripts,test}/**/*.{js,ts}\"",
     "format": "prettier --write \"{src,scripts,test}/**/*.{js,ts}\"",
-    "test": "npm run lint && npm run test:unit",
+    "test": "yarn lint && yarn test:unit",
     "test:unit": "jest",
     "snapshot": "jest --updateSnapshot"
   },
@@ -38,7 +38,9 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "setupTestFrameworkScriptFile": "<rootDir>/test/setup.ts",
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/setup.ts"
+    ],
     "testRegex": "/test/.+\\.spec\\.(js|ts)$",
     "moduleFileExtensions": [
       "ts",
@@ -47,25 +49,26 @@
     ],
     "globals": {
       "ts-jest": {
-        "tsConfigFile": "test/tsconfig.json"
+        "tsConfig": "test/tsconfig.json"
       }
     }
   },
   "devDependencies": {
-    "@types/fs-extra": "^5.0.4",
-    "@types/jest": "^22.1.4",
-    "@types/puppeteer": "^1.5.0",
-    "jest": "^22.4.2",
-    "jest-image-snapshot": "^2.4.3",
-    "prettier": "1.13.7",
-    "ts-jest": "^22.4.1",
-    "tslint": "^5.10.0",
+    "@types/fs-extra": "^8.0.1",
+    "@types/jest": "^24.0.23",
+    "@types/jest-image-snapshot": "^2.11.0",
+    "@types/puppeteer": "^2.0.0",
+    "jest": "^24.9.0",
+    "jest-image-snapshot": "^2.11.1",
+    "prettier": "1.19.1",
+    "temp-dir": "^2.0.0",
+    "ts-jest": "^24.2.0",
+    "tslint": "^5.20.1",
     "tslint-config-ktsn": "^2.1.0",
-    "tslint-config-prettier": "^1.13.0",
-    "temp-dir": "^1.0.0",
-    "typescript": "^2.9.2"
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.7.3"
   },
   "dependencies": {
-    "puppeteer": "^1.6.0"
+    "puppeteer": "^2.0.0"
   }
 }
