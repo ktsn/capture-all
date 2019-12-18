@@ -1,5 +1,5 @@
 const path = require('path')
-const { performance } = require('perf_hooks')
+const { performance, PerformanceObserver } = require('perf_hooks')
 const { captureAll } = require('../')
 
 const N = 100
@@ -20,10 +20,21 @@ const targets = range(N).map(() => {
   }
 })
 
-performance.mark('start')
-captureAll(targets, { concurrency: CONCURRENCY }).then(() => {
-  performance.mark('end')
-  performance.measure('start to end', 'start', 'end')
-  const measure = performance.getEntriesByName('start to end')[0]
-  console.log(measure.duration / 1000 + 's')
+function run() {
+  performance.mark('start')
+  return captureAll(targets, { concurrency: CONCURRENCY }).then(() => {
+    performance.mark('end')
+    performance.measure('start to end', 'start', 'end')
+  })
+}
+
+const obs = new PerformanceObserver(list => {
+  const entry = list.getEntries()[0]
+  console.log(entry.name, entry.duration / 1000 + 's')
 })
+obs.observe({
+  entryTypes: ['measure'],
+  buffered: false
+})
+
+run()

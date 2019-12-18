@@ -1,10 +1,9 @@
 import * as path from 'path'
 import * as fs from 'fs'
-// @ts-ignore
-import tempDir = require('temp-dir')
+import * as tempDir from 'temp-dir'
 import { captureAll, createCaptureStream } from '../src/index'
 
-describe('Snapshot test', async () => {
+describe('Snapshot test', () => {
   const fixtureUrl = 'file://' + path.resolve(__dirname, 'fixture.html')
 
   it('should capture web page', async () => {
