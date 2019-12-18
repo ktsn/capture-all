@@ -1,10 +1,7 @@
 language: node_js
 node_js:
-  - "6"
-cache:
-  directories:
-    - $HOME/.npm
-    - node_modules
+  - '12'
+cache: yarn
 before_install:
   - sudo apt-get -qq update
   - |
@@ -48,7 +45,7 @@ before_install:
     xdg-utils\
     wget
 install:
-  - npm i --cache-min 600000
+  - yarn install
 script:
-  - npm run build
-  - npm run test
+  - yarn build
+  - yarn test
