@@ -55,6 +55,7 @@ Capture screenshots of Web pages which specified by `targets` and return an arra
 * `target`: a selector for capturing element
 * `hidden`: an array of selector to hide matched elements from captured image
 * `remove`: an array of selector to remove matched elements from captured image
+* `disableCssAnimation`: `true` if css animations / transitions are to be disabled. (default: `true`)
 * `viewport`: viewport size of browser
 
 `CaptureOptions` may have the following properties:
@@ -69,6 +70,7 @@ Capture screenshots of Web pages which specified by `targets` and return an arra
 * `target`: a selector of captured element
 * `hidden`: an array of selector which is hidden from captured image
 * `remove`: an array of selector which is removed from captured image
+* `disableCssAnimation`: `true` if css animations / transitions are to be disabled
 * `viewport`: viewport size of browser
 
 ### `createCaptureStream(targets: CaptureTarget[], options?: CaptureOptions): ReadableStream<CaptureResult>`
