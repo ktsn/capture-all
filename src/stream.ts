@@ -164,6 +164,7 @@ export class PuppeteerWrapper {
       target: target.target || 'html',
       hidden: target.hidden || [],
       remove: target.remove || [],
+      disableCssAnimation: target.disableCssAnimation ?? true,
       viewport: target.viewport || {
         width: 800,
         height: 600
@@ -188,6 +189,12 @@ export class PuppeteerWrapper {
         })
       }
 
+      if (t.disableCssAnimation) {
+        await page.addStyleTag({
+          content: styleToDisableCssAnimation
+        })
+      }
+
       const el = await page.$(t.target)
       if (!el) {
         return
@@ -199,6 +206,7 @@ export class PuppeteerWrapper {
         target: t.target,
         hidden: t.hidden,
         remove: t.remove,
+        disableCssAnimation: t.disableCssAnimation,
         viewport: t.viewport
       }
     } catch (e) {
@@ -232,6 +240,19 @@ export class PuppeteerWrapper {
     }
   }
 }
+
+const styleToDisableCssAnimation = `
+*,
+*::before,
+*::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+input {
+  caret-color: transparent !important;
+}
+`
 
 function generateStyleToHide(selectors: string[]): string {
   return `${selectors.join(',')} { visibility: hidden !important; }`
