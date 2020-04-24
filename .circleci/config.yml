@@ -6,7 +6,7 @@ executors:
       - image: circleci/node:14
 
 orbs:
-  puppeteer: threetreelight/puppeteer@0.1.2
+  puppeteer: threetreeslight/puppeteer@0.1.2
 
 jobs:
   test:
