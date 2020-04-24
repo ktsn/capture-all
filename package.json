@@ -63,7 +63,7 @@
     "prettier": "1.19.1",
     "temp-dir": "^2.0.0",
     "ts-jest": "^24.2.0",
-    "tslint": "^5.20.1",
+    "tslint": "^6.1.1",
     "tslint-config-ktsn": "^2.1.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.7.3"
