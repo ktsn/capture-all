@@ -13,6 +13,7 @@ export interface CaptureTarget {
   target?: string
   hidden?: string[]
   remove?: string[]
+  disableCssAnimation?: boolean
   viewport?: Viewport
 }
 
@@ -22,6 +23,7 @@ export interface CaptureResult {
   target: string
   hidden: string[]
   remove: string[]
+  disableCssAnimation: boolean
   viewport: Viewport
 }
 

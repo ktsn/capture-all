@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Fixture Document</title>
+  <style>
+    h1 {
+      height: 30px;
+      width: 100px;
+      background-color: #4766ff;
+    }
+
+    h2 {
+      height: 20px;
+      width: 50px;
+      background-color: #58ff55;
+    }
+
+    p {
+      height: 16px;
+      width: 100%;
+      background-color: #888;
+    }
+
+    .sub {
+      background-color: #ccc;
+    }
+
+    .wrapper {
+      opacity: 0;
+    }
+
+    .wrapper.show {
+      opacity: 1;
+      transition: 1000ms opacity ease-out;
+    }
+
+    @media screen and (max-width: 797px) {
+      h1 {
+        height: 24px;
+      }
+
+      h2 {
+        height: 18px;
+      }
+
+      p {
+        height: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="wrapper" class="wrapper">
+    <h1 id="title"></h1>
+    <p class="paragraph"></p>
+
+    <h2 id="sub-title"></h2>
+    <p class="paragraph sub"></p>
+  </div>
+
+  <script>
+    setTimeout(function() {
+      var wrapper = document.getElementById('wrapper')
+      wrapper.classList.add('show')
+    }, 0)
+  </script>
+</body>
+
+</html>

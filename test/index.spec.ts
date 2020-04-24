@@ -139,6 +139,27 @@ describe('Snapshot test', () => {
   })
 })
 
+describe('Animation handling', () => {
+  const fixtureUrl =
+    'file://' + path.resolve(__dirname, 'fixture-animation.html')
+
+  it('disables css animation by default', async () => {
+    const res = await captureAll(
+      [
+        {
+          url: fixtureUrl
+        }
+      ],
+      {
+        concurrency: 1
+      }
+    )
+    expect(res[0].url).toBe(fixtureUrl)
+    expect(res[0].disableCssAnimation).toEqual(true)
+    expect(res[0].image).toMatchImageSnapshot()
+  })
+})
+
 function generateNotFoundUrl() {
   const base = path.join(tempDir, 'not_found_file')
   let file = base
