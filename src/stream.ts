@@ -65,7 +65,7 @@ export class ReadableStreamImpl extends Readable
 
   constructor(targets: CaptureTarget[], options: CaptureOptions) {
     super({
-      objectMode: true
+      objectMode: true,
     })
     assert(targets.length > 0, 'capture target must have at least one')
 
@@ -79,7 +79,7 @@ export class ReadableStreamImpl extends Readable
   teardown(): void {
     if (!this.torndown) {
       this.torndown = true
-      this.processes.forEach(p => p.close())
+      this.processes.forEach((p) => p.close())
     }
   }
 
@@ -98,7 +98,7 @@ export class ReadableStreamImpl extends Readable
     }
 
     p.run(target).then(
-      result => {
+      (result) => {
         if (!result) {
           return this.startProcess(p)
         }
@@ -108,7 +108,7 @@ export class ReadableStreamImpl extends Readable
           return this.startProcess(p)
         }
       },
-      err => {
+      (err) => {
         process.nextTick(() => this.emit('error', err))
         this.teardown()
       }
@@ -116,11 +116,11 @@ export class ReadableStreamImpl extends Readable
   }
 
   finishedAllProcesses(): boolean {
-    return this.processes.every(p => !p.isRunning)
+    return this.processes.every((p) => !p.isRunning)
   }
 
   _read(size: number): void {
-    this.processes.forEach(p => {
+    this.processes.forEach((p) => {
       this.startProcess(p)
     })
   }
@@ -144,7 +144,7 @@ export class PuppeteerWrapper {
   }
 
   constructor(private options: puppeteer.LaunchOptions | undefined) {
-    this.signals.forEach(event => {
+    this.signals.forEach((event) => {
       process.on(event as any, this.signalListener)
     })
   }
@@ -168,8 +168,8 @@ export class PuppeteerWrapper {
       delay: target.delay ?? 0,
       viewport: target.viewport || {
         width: 800,
-        height: 600
-      }
+        height: 600,
+      },
     }
 
     const page = this.page!
@@ -180,19 +180,19 @@ export class PuppeteerWrapper {
 
       if (t.hidden.length > 0) {
         await page.addStyleTag({
-          content: generateStyleToHide(t.hidden)
+          content: generateStyleToHide(t.hidden),
         })
       }
 
       if (t.remove.length > 0) {
         await page.addStyleTag({
-          content: generateStyleToRemove(t.remove)
+          content: generateStyleToRemove(t.remove),
         })
       }
 
       if (t.disableCssAnimation) {
         await page.addStyleTag({
-          content: styleToDisableCssAnimation
+          content: styleToDisableCssAnimation,
         })
       }
 
@@ -211,7 +211,7 @@ export class PuppeteerWrapper {
         remove: t.remove,
         disableCssAnimation: t.disableCssAnimation,
         delay: t.delay,
-        viewport: t.viewport
+        viewport: t.viewport,
       }
     } catch (e) {
       if (!this.isClosed) {
@@ -225,7 +225,7 @@ export class PuppeteerWrapper {
   close(fromSignal: boolean = false): void {
     assert(!this.isClosed, 'already closed')
 
-    this.signals.forEach(event => {
+    this.signals.forEach((event) => {
       process.removeListener(event, this.signalListener)
     })
 
@@ -271,7 +271,7 @@ function range(len: number): number[] {
 }
 
 function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms)
   })
 }
