@@ -3,12 +3,16 @@ version: 2.1
 executors:
   node:
     docker:
-      - image: circleci/node:14-browsers
+      - image: circleci/node:14
+
+orbs:
+  puppeteer: threetreelight/puppeteer@0.1.2
 
 jobs:
   test:
     executor: node
     steps:
+      - puppeteer/install
       - checkout
 
       - restore_cache:
@@ -24,7 +28,7 @@ jobs:
             - ~/.cache/yarn
 
       - run: yarn build
-      - run: yarn test
+      - run: yarn test -w 2
 
 workflows:
   version: 2
