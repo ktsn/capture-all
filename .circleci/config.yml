@@ -25,3 +25,9 @@ jobs:
 
       - run: yarn build
       - run: yarn test
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
