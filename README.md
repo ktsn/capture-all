@@ -30,6 +30,9 @@ captureAll([
     // Selectors to remove from capture (add `display: none;` to the elements)
     remove: ['#fbar'],
 
+    // Delay (milliseconds) before taking screenshot
+    delay: 3000,
+
     // Viewport size of a browser
     viewport: {
       width: 1024,
@@ -56,6 +59,7 @@ Capture screenshots of Web pages which specified by `targets` and return an arra
 * `hidden`: an array of selector to hide matched elements from captured image
 * `remove`: an array of selector to remove matched elements from captured image
 * `disableCssAnimation`: `true` if css animations / transitions are to be disabled. (default: `true`)
+* `delay`: Delay (milliseconds) before taking screenshot
 * `viewport`: viewport size of browser
 
 `CaptureOptions` may have the following properties:
@@ -71,6 +75,7 @@ Capture screenshots of Web pages which specified by `targets` and return an arra
 * `hidden`: an array of selector which is hidden from captured image
 * `remove`: an array of selector which is removed from captured image
 * `disableCssAnimation`: `true` if css animations / transitions are to be disabled
+* `delay`: Delay (milliseconds) before taking screenshot
 * `viewport`: viewport size of browser
 
 ### `createCaptureStream(targets: CaptureTarget[], options?: CaptureOptions): ReadableStream<CaptureResult>`

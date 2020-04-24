@@ -14,6 +14,7 @@ export interface CaptureTarget {
   hidden?: string[]
   remove?: string[]
   disableCssAnimation?: boolean
+  delay?: number
   viewport?: Viewport
 }
 
@@ -24,6 +25,7 @@ export interface CaptureResult {
   hidden: string[]
   remove: string[]
   disableCssAnimation: boolean
+  delay: number
   viewport: Viewport
 }
 

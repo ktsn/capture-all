@@ -155,7 +155,25 @@ describe('Animation handling', () => {
       }
     )
     expect(res[0].url).toBe(fixtureUrl)
-    expect(res[0].disableCssAnimation).toEqual(true)
+    expect(res[0].disableCssAnimation).toBe(true)
+    expect(res[0].image).toMatchImageSnapshot()
+  })
+
+  it('delays capture', async () => {
+    const res = await captureAll(
+      [
+        {
+          url: fixtureUrl,
+          delay: 1000,
+          disableCssAnimation: false
+        }
+      ],
+      {
+        concurrency: 1
+      }
+    )
+    expect(res[0].url).toBe(fixtureUrl)
+    expect(res[0].delay).toBe(1000)
     expect(res[0].image).toMatchImageSnapshot()
   })
 })

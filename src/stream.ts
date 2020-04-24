@@ -165,6 +165,7 @@ export class PuppeteerWrapper {
       hidden: target.hidden || [],
       remove: target.remove || [],
       disableCssAnimation: target.disableCssAnimation ?? true,
+      delay: target.delay ?? 0,
       viewport: target.viewport || {
         width: 800,
         height: 600
@@ -201,12 +202,15 @@ export class PuppeteerWrapper {
       }
 
       return {
-        image: await el.screenshot({ encoding: 'binary' }),
+        image: await sleep(t.delay).then(() =>
+          el.screenshot({ encoding: 'binary' })
+        ),
         url: t.url,
         target: t.target,
         hidden: t.hidden,
         remove: t.remove,
         disableCssAnimation: t.disableCssAnimation,
+        delay: t.delay,
         viewport: t.viewport
       }
     } catch (e) {
@@ -264,4 +268,10 @@ function generateStyleToRemove(selectors: string[]): string {
 
 function range(len: number): number[] {
   return Array.apply(null, Array(len)).map((_: any, i: number) => i)
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
 }
