@@ -1,6 +1,6 @@
 {
   "name": "capture-all",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": "katashin",
   "description": "Flexible utility to get screenshots from Web pages",
   "keywords": [
@@ -54,13 +54,13 @@
     }
   },
   "devDependencies": {
-    "@types/fs-extra": "^8.0.1",
-    "@types/jest": "^24.0.23",
-    "@types/jest-image-snapshot": "^2.11.0",
-    "@types/puppeteer": "^2.0.0",
+    "@types/fs-extra": "^9.0.0",
+    "@types/jest": "^25.2.1",
+    "@types/jest-image-snapshot": "^3.1.0",
+    "@types/puppeteer": "^3.0.0",
     "jest": "^24.9.0",
-    "jest-image-snapshot": "^2.11.1",
-    "prettier": "1.19.1",
+    "jest-image-snapshot": "^4.0.0",
+    "prettier": "2.0.5",
     "temp-dir": "^2.0.0",
     "ts-jest": "^24.2.0",
     "tslint": "^5.20.1",

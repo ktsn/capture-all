@@ -8,14 +8,14 @@ describe('Snapshot test', () => {
 
   it('should capture web page', async () => {
     const res = await captureAll([{ url: fixtureUrl }], {
-      concurrency: 1
+      concurrency: 1,
     })
     expect(res[0].url).toBe(fixtureUrl)
     expect(res[0].target).toBe('html')
     expect(res[0].hidden).toEqual([])
     expect(res[0].viewport).toEqual({
       width: 800,
-      height: 600
+      height: 600,
     })
     expect(res[0].image).toMatchImageSnapshot()
   })
@@ -24,8 +24,8 @@ describe('Snapshot test', () => {
     const res = await captureAll([
       {
         url: fixtureUrl,
-        target: '.paragraph'
-      }
+        target: '.paragraph',
+      },
     ])
     expect(res.length).toBe(1)
     expect(res[0].target).toBe('.paragraph')
@@ -36,8 +36,8 @@ describe('Snapshot test', () => {
     const res = await captureAll([
       {
         url: fixtureUrl,
-        hidden: ['#title', '#sub-title']
-      }
+        hidden: ['#title', '#sub-title'],
+      },
     ])
     expect(res[0].image).toMatchImageSnapshot()
     expect(res[0].hidden).toEqual(['#title', '#sub-title'])
@@ -47,8 +47,8 @@ describe('Snapshot test', () => {
     const res = await captureAll([
       {
         url: fixtureUrl,
-        remove: ['#title', '#sub-title']
-      }
+        remove: ['#title', '#sub-title'],
+      },
     ])
     expect(res[0].image).toMatchImageSnapshot()
     expect(res[0].remove).toEqual(['#title', '#sub-title'])
@@ -60,39 +60,39 @@ describe('Snapshot test', () => {
         url: fixtureUrl,
         viewport: {
           width: 320,
-          height: 480
-        }
-      }
+          height: 480,
+        },
+      },
     ])
     expect(res[0].image).toMatchImageSnapshot()
     expect(res[0].viewport).toEqual({
       width: 320,
-      height: 480
+      height: 480,
     })
   })
 
   it('should throw if capturing process throws', async () => {
-    const mock = jest.fn(err => {
+    const mock = jest.fn((err) => {
       expect(err.message).toMatch('ERR_FILE_NOT_FOUND')
     })
 
     await captureAll([
       {
-        url: generateNotFoundUrl()
-      }
+        url: generateNotFoundUrl(),
+      },
     ]).catch(mock)
 
     expect(mock).toHaveBeenCalled()
   })
 
-  it('should create capture stream', done => {
-    const dataMock = jest.fn(res => {
+  it('should create capture stream', (done) => {
+    const dataMock = jest.fn((res) => {
       expect(res.url).toBe(fixtureUrl)
       expect(res.target).toBe('html')
       expect(res.hidden).toEqual([])
       expect(res.viewport).toEqual({
         width: 800,
-        height: 600
+        height: 600,
       })
       expect(res.image).toMatchImageSnapshot()
     })
@@ -101,11 +101,11 @@ describe('Snapshot test', () => {
     const stream = createCaptureStream(
       [
         {
-          url: fixtureUrl
-        }
+          url: fixtureUrl,
+        },
       ],
       {
-        concurrency: 1
+        concurrency: 1,
       }
     )
 
@@ -118,19 +118,19 @@ describe('Snapshot test', () => {
     })
   })
 
-  it('should notify error from stream if capturing process throws', done => {
+  it('should notify error from stream if capturing process throws', (done) => {
     const dataMock = jest.fn()
     const endMock = jest.fn()
 
     const stream = createCaptureStream([
       {
-        url: generateNotFoundUrl()
-      }
+        url: generateNotFoundUrl(),
+      },
     ])
 
     stream.on('data', dataMock)
     stream.on('end', endMock)
-    stream.on('error', err => {
+    stream.on('error', (err) => {
       expect(err.message).toMatch('ERR_FILE_NOT_FOUND')
       expect(dataMock).not.toHaveBeenCalledTimes(1)
       expect(endMock).not.toHaveBeenCalled()
@@ -147,11 +147,11 @@ describe('Animation handling', () => {
     const res = await captureAll(
       [
         {
-          url: fixtureUrl
-        }
+          url: fixtureUrl,
+        },
       ],
       {
-        concurrency: 1
+        concurrency: 1,
       }
     )
     expect(res[0].url).toBe(fixtureUrl)
@@ -165,11 +165,11 @@ describe('Animation handling', () => {
         {
           url: fixtureUrl,
           delay: 1000,
-          disableCssAnimation: false
-        }
+          disableCssAnimation: false,
+        },
       ],
       {
-        concurrency: 1
+        concurrency: 1,
       }
     )
     expect(res[0].url).toBe(fixtureUrl)

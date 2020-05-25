@@ -41,7 +41,7 @@ export function captureAll(
   const stream = createCaptureStream(targets, options)
   const result: CaptureResult[] = []
 
-  stream.on('data', data => {
+  stream.on('data', (data) => {
     result.push(data)
   })
 
