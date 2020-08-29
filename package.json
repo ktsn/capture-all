@@ -60,7 +60,7 @@
     "@types/puppeteer": "^3.0.0",
     "jest": "^24.9.0",
     "jest-image-snapshot": "^4.0.0",
-    "prettier": "2.0.5",
+    "prettier": "2.1.1",
     "temp-dir": "^2.0.0",
     "ts-jest": "^24.2.0",
     "tslint": "^5.20.1",

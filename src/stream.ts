@@ -57,7 +57,8 @@ export interface ReadableStream<T> extends Readable {
   removeListener(event: string, listener: (...args: any[]) => void): this
 }
 
-export class ReadableStreamImpl extends Readable
+export class ReadableStreamImpl
+  extends Readable
   implements ReadableStream<CaptureResult> {
   remainingTargets: CaptureTarget[]
   processes: PuppeteerWrapper[]
