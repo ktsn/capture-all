@@ -100,11 +100,9 @@ export class ReadableStreamImpl
 
     p.run(target).then(
       (result) => {
-        if (!result) {
-          return this.startProcess(p)
-        }
-
-        const shouldContinue = this.push(result)
+        const shouldContinue = result.reduce((_, item) => {
+          return this.push(item)
+        }, true)
         if (shouldContinue) {
           return this.startProcess(p)
         }
@@ -150,7 +148,7 @@ export class PuppeteerWrapper {
     })
   }
 
-  async run(target: CaptureTarget): Promise<CaptureResult | undefined> {
+  async run(target: CaptureTarget): Promise<CaptureResult[]> {
     assert(!this.isClosed, 'already closed')
     assert(!this.isRunning, 'must not capture in parallel')
     this.isRunning = true
@@ -159,6 +157,33 @@ export class PuppeteerWrapper {
       this.browser = await puppeteer.launch(this.options)
       this.page = await this.browser.newPage()
     }
+
+    const page = this.page!
+
+    let captureIndex = 0
+    const captureResults: CaptureResult[] = []
+    async function baseCapture(): Promise<void> {
+      const el = await page.$(t.target)
+      if (!el) {
+        return
+      }
+
+      captureResults.push({
+        index: captureIndex++,
+        image: await sleep(t.delay).then(() =>
+          el.screenshot({ encoding: 'binary' })
+        ),
+        url: t.url,
+        target: t.target,
+        hidden: t.hidden,
+        remove: t.remove,
+        disableCssAnimation: t.disableCssAnimation,
+        delay: t.delay,
+        viewport: t.viewport,
+      })
+    }
+
+    const targetCapture = target.capture
 
     const t = {
       url: target.url,
@@ -171,9 +196,10 @@ export class PuppeteerWrapper {
         width: 800,
         height: 600,
       },
+      capture: targetCapture
+        ? () => targetCapture(page, baseCapture)
+        : baseCapture,
     }
-
-    const page = this.page!
 
     try {
       await page.setViewport(t.viewport)
@@ -197,27 +223,13 @@ export class PuppeteerWrapper {
         })
       }
 
-      const el = await page.$(t.target)
-      if (!el) {
-        return
-      }
-
-      return {
-        image: await sleep(t.delay).then(() =>
-          el.screenshot({ encoding: 'binary' })
-        ),
-        url: t.url,
-        target: t.target,
-        hidden: t.hidden,
-        remove: t.remove,
-        disableCssAnimation: t.disableCssAnimation,
-        delay: t.delay,
-        viewport: t.viewport,
-      }
+      await t.capture()
+      return captureResults
     } catch (e) {
       if (!this.isClosed) {
         throw e
       }
+      return []
     } finally {
       this.isRunning = false
     }

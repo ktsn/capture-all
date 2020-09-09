@@ -16,9 +16,14 @@ export interface CaptureTarget {
   disableCssAnimation?: boolean
   delay?: number
   viewport?: Viewport
+  capture?: (
+    page: puppeteer.Page,
+    capture: () => Promise<void>
+  ) => Promise<void>
 }
 
 export interface CaptureResult {
+  index: number
   image: Buffer
   url: string
   target: string

@@ -137,6 +137,33 @@ describe('Snapshot test', () => {
       done()
     })
   })
+
+  it('allows hooking capturing operations', async () => {
+    const res = await captureAll(
+      [
+        {
+          url: fixtureUrl,
+          capture: async (page, capture) => {
+            const h1 = await page.$('h1')
+            await h1?.focus()
+            await capture()
+
+            const h2 = await page.$('h2')
+            await h2?.focus()
+            await capture()
+          },
+        },
+      ],
+      {
+        concurrency: 1,
+      }
+    )
+    expect(res.length).toBe(2)
+    expect(res[0].index).toBe(0)
+    expect(res[0].image).toMatchImageSnapshot()
+    expect(res[1].index).toBe(1)
+    expect(res[1].image).toMatchImageSnapshot()
+  })
 })
 
 describe('Animation handling', () => {
