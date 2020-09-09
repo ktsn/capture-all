@@ -230,6 +230,7 @@ export class PuppeteerWrapper {
       return []
     } finally {
       this.isRunning = false
+      page.close()
     }
   }
 
