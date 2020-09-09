@@ -132,7 +132,6 @@ export class ReadableStreamImpl
 
 export class PuppeteerWrapper {
   private browser: puppeteer.Browser | undefined
-  private page: puppeteer.Page | undefined
 
   isRunning = false
   isClosed = false
@@ -155,10 +154,9 @@ export class PuppeteerWrapper {
 
     if (!this.browser) {
       this.browser = await puppeteer.launch(this.options)
-      this.page = await this.browser.newPage()
     }
 
-    const page = this.page!
+    const page = await this.browser.newPage()
 
     let captureIndex = 0
     const captureResults: CaptureResult[] = []
@@ -253,7 +251,6 @@ export class PuppeteerWrapper {
       }
 
       this.browser = undefined
-      this.page = undefined
     }
   }
 }
