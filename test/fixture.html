@@ -1,56 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Fixture Document</title>
-  <style>
-    h1 {
-      height: 30px;
-      width: 100px;
-      background-color: #4766ff;
-    }
-
-    h2 {
-      height: 20px;
-      width: 50px;
-      background-color: #58ff55;
-    }
-
-    p {
-      height: 16px;
-      width: 100%;
-      background-color: #888;
-    }
-
-    .sub {
-      background-color: #ccc;
-    }
-
-    @media screen and (max-width: 797px) {
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Fixture Document</title>
+    <style>
       h1 {
-        height: 24px;
+        height: 30px;
+        width: 100px;
+        background-color: #4766ff;
       }
 
       h2 {
-        height: 18px;
+        height: 20px;
+        width: 50px;
+        background-color: #58ff55;
       }
 
       p {
-        height: 12px;
+        height: 16px;
+        width: 100%;
+        background-color: #888;
       }
-    }
-  </style>
-</head>
 
-<body>
-  <h1 id="title"></h1>
-  <p class="paragraph"></p>
+      .sub {
+        background-color: #ccc;
+      }
 
-  <h2 id="sub-title"></h2>
-  <p class="paragraph sub"></p>
-</body>
+      @media screen and (max-width: 797px) {
+        h1 {
+          height: 24px;
+        }
 
+        h2 {
+          height: 18px;
+        }
+
+        p {
+          height: 12px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1 id="title" tabindex="0"></h1>
+    <p class="paragraph"></p>
+
+    <h2 id="sub-title" tabindex="0"></h2>
+    <p class="paragraph sub"></p>
+  </body>
 </html>
