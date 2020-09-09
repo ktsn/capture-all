@@ -18,7 +18,7 @@ export interface CaptureTarget {
   viewport?: Viewport
   capture?: (
     page: puppeteer.Page,
-    capture: () => Promise<void>
+    capture: (target?: string) => Promise<void>
   ) => Promise<void>
 }
 

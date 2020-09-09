@@ -164,6 +164,28 @@ describe('Snapshot test', () => {
     expect(res[1].index).toBe(1)
     expect(res[1].image).toMatchImageSnapshot()
   })
+
+  it('allows changing capturing target with the argument of capture function', async () => {
+    const res = await captureAll(
+      [
+        {
+          url: fixtureUrl,
+          capture: async (_page, capture) => {
+            await capture('h1')
+            await capture('h2')
+          },
+        },
+      ],
+      {
+        concurrency: 1,
+      }
+    )
+    expect(res.length).toBe(2)
+    expect(res[0].index).toBe(0)
+    expect(res[0].image).toMatchImageSnapshot()
+    expect(res[1].index).toBe(1)
+    expect(res[1].image).toMatchImageSnapshot()
+  })
 })
 
 describe('Animation handling', () => {
