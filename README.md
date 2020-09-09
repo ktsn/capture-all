@@ -48,7 +48,7 @@ captureAll([
 
 ## Hooking Capturing Processing
 
-You can define detailed behavior of the capturing processing with `capture` option. The `capture` option is an function receving Puppeteer's `Page` instance as the 1st argument and a capturing function as the 2nd argument. You have to call the 2nd argument function by your hand when you specify `capture` option.
+You can define detailed behavior of the capturing processing with `capture` option. The `capture` option is an function receving [Puppeteer's `Page` instance](https://github.com/puppeteer/puppeteer/blob/v5.2.1/docs/api.md#class-page) as the 1st argument and a capturing function as the 2nd argument. You have to call the 2nd argument function by your hand when you specify `capture` option.
 
 ```js
 
