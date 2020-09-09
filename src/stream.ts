@@ -162,8 +162,8 @@ export class PuppeteerWrapper {
 
     let captureIndex = 0
     const captureResults: CaptureResult[] = []
-    async function baseCapture(): Promise<void> {
-      const el = await page.$(t.target)
+    async function baseCapture(target: string = t.target): Promise<void> {
+      const el = await page.$(target)
       if (!el) {
         return
       }
@@ -174,7 +174,7 @@ export class PuppeteerWrapper {
           el.screenshot({ encoding: 'binary' })
         ),
         url: t.url,
-        target: t.target,
+        target,
         hidden: t.hidden,
         remove: t.remove,
         disableCssAnimation: t.disableCssAnimation,
