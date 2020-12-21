@@ -398,10 +398,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/puppeteer@^3.0.0":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@types/puppeteer/-/puppeteer-3.0.3.tgz#db0066e294cb9a1572d8e25fc68705e6d270ee8b"
-  integrity sha512-JDrg4N5hzKvtZsD62DV6i5h5hxKtZF+Q79YmGIacAVyJNcG1OWR0ty+e6LwqGWaoEt5lPeTtA2Z7OuTjUg6rag==
+"@types/puppeteer@^5.4.2":
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/@types/puppeteer/-/puppeteer-5.4.2.tgz#80f3a1f54dedbbf750779716de81401549062072"
+  integrity sha512-yjbHoKjZFOGqA6bIEI2dfBE5UPqU0YGWzP+ipDVP1iGzmlhksVKTBVZfT3Aj3wnvmcJ2PQ9zcncwOwyavmafBw==
   dependencies:
     "@types/node" "*"
 
