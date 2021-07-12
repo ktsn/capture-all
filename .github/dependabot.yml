@@ -1,0 +1,19 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+    day: saturday
+    timezone: Asia/Singapore
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: "@types/fs-extra"
+    versions:
+    - 9.0.10
+    - 9.0.8
+  - dependency-name: puppeteer
+    versions:
+    - 7.0.1
+    - 7.1.0
+    - 8.0.0
