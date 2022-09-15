@@ -168,8 +168,8 @@ export class PuppeteerWrapper {
 
       captureResults.push({
         index: captureIndex++,
-        image: await sleep(t.delay).then(() =>
-          el.screenshot({ encoding: 'binary' })
+        image: await sleep(t.delay).then(
+          () => el.screenshot({ encoding: 'binary' }) as Promise<Buffer>
         ),
         url: t.url,
         target,
@@ -230,7 +230,6 @@ export class PuppeteerWrapper {
       return []
     } finally {
       this.isRunning = false
-      page.close()
     }
   }
 
