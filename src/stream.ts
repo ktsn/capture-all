@@ -59,7 +59,8 @@ export interface ReadableStream<T> extends Readable {
 
 export class ReadableStreamImpl
   extends Readable
-  implements ReadableStream<CaptureResult> {
+  implements ReadableStream<CaptureResult>
+{
   remainingTargets: CaptureTarget[]
   processes: PuppeteerWrapper[]
   torndown = false
@@ -168,8 +169,8 @@ export class PuppeteerWrapper {
 
       captureResults.push({
         index: captureIndex++,
-        image: await sleep(t.delay).then(() =>
-          el.screenshot({ encoding: 'binary' })
+        image: await sleep(t.delay).then(
+          () => el.screenshot({ encoding: 'binary' }) as Promise<Buffer>
         ),
         url: t.url,
         target,
@@ -230,7 +231,6 @@ export class PuppeteerWrapper {
       return []
     } finally {
       this.isRunning = false
-      page.close()
     }
   }
 
