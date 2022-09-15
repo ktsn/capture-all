@@ -12,6 +12,8 @@ jobs:
   test:
     executor: node
     steps:
+      - puppeteer/install
+
       - checkout
 
       - restore_cache:
