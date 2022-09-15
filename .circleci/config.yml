@@ -37,6 +37,9 @@ jobs:
       - run: yarn build
       - run: yarn test -w 2
 
+      - store_artifacts:
+          path: test/__image_snapshots__
+
 workflows:
   version: 2
   test:
