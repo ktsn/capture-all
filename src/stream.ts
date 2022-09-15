@@ -59,7 +59,8 @@ export interface ReadableStream<T> extends Readable {
 
 export class ReadableStreamImpl
   extends Readable
-  implements ReadableStream<CaptureResult> {
+  implements ReadableStream<CaptureResult>
+{
   remainingTargets: CaptureTarget[]
   processes: PuppeteerWrapper[]
   torndown = false
