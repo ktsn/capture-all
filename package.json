@@ -55,7 +55,7 @@
     "preset": "ts-jest"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.13",
+    "@types/fs-extra": "^11.0.1",
     "@types/jest": "^29.0.2",
     "@types/jest-image-snapshot": "^5.1.0",
     "@types/puppeteer": "^5.4.6",
